@@ -27,6 +27,9 @@ class HumidityController extends StatefulWidget {
 
 class _HumidityControllerState extends State<HumidityController> {
   var _tapPosition = Offset.zero;
+  var _dragePosition = Offset(0, 100);
+  var _shouldDraw = false;
+  var _validPressed = false;
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
@@ -39,19 +42,31 @@ class _HumidityControllerState extends State<HumidityController> {
           child: GestureDetector(
             child: CustomPaint(
               size: Size.infinite,
-              painter: HumidityControllerPainter(_tapPosition),
+              painter: HumidityControllerPainter(
+                  tapPosition: _tapPosition,
+                  dragePosition: _dragePosition,
+                  validPressed: _validPressed,
+                  onShouldDraw: (bool shouldDraw) {
+                    _shouldDraw = shouldDraw;
+                  }),
             ),
-            onTapDown: (details) {
+            onVerticalDragStart: (details) {
               setState(() {
-                _tapPosition = details.globalPosition;
+                _tapPosition = details.localPosition;
               });
             },
-            onTapUp: (details) {
-              
+            onVerticalDragEnd: (details) {
+               setState(() {
+                _validPressed = false;
+              });
             },
-            onHorizontalDragUpdate: (details) {
+            onVerticalDragUpdate: (details) {
+              print(_shouldDraw);
               setState(() {
-                _tapPosition = details.globalPosition;
+                if (_shouldDraw) {
+                  _validPressed = true;
+                  _dragePosition = details.localPosition;
+                }
               });
             },
           ),

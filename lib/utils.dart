@@ -26,5 +26,19 @@ class Utils {
     paragraph.addText(text);
     return paragraph.build()..layout(ui.ParagraphConstraints(width: Size.infinite.width));
   }
+
+  static double valueBetween(double value, double min, double max){
+    double result = 0;
+    if(value >= min && value <= max){
+      result = value;
+    }
+    else if(value < min){
+      result = min;
+    }
+    else if(value > max){
+      result = max;
+    }
+    return result;
+  }
   
 }
