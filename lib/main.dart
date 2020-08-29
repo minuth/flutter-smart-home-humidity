@@ -26,18 +26,34 @@ class HumidityController extends StatefulWidget {
 }
 
 class _HumidityControllerState extends State<HumidityController> {
+  var _tapPosition = Offset.zero;
   @override
   Widget build(BuildContext context) {
-    final screenSize = MediaQuery.of(context).size;
+    final _screenSize = MediaQuery.of(context).size;
     return Scaffold(
       body: SafeArea(
         child: Container(
-          width: screenSize.width,
-          height: screenSize.height,
+          width: _screenSize.width,
+          height: _screenSize.height,
           color: Colors.white,
-          child: CustomPaint(
-            size: Size.infinite,
-            painter: HumidityControllerPainter(),
+          child: GestureDetector(
+            child: CustomPaint(
+              size: Size.infinite,
+              painter: HumidityControllerPainter(_tapPosition),
+            ),
+            onTapDown: (details) {
+              setState(() {
+                _tapPosition = details.globalPosition;
+              });
+            },
+            onTapUp: (details) {
+              
+            },
+            onHorizontalDragUpdate: (details) {
+              setState(() {
+                _tapPosition = details.globalPosition;
+              });
+            },
           ),
         ),
       ),
