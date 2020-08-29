@@ -30,22 +30,23 @@ class HumidityControllerPainter extends CustomPainter {
       begin: Alignment.topCenter,
       end: Alignment.bottomCenter,
     );
-    final rect = Rect.fromCenter(
+    final gradientRect = Rect.fromCenter(
         center: centerPoint, height: size.height, width: size.width);
     final paint = Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = strokeWidth
-      ..shader = gradient.createShader(rect)
+      ..shader = gradient.createShader(gradientRect)
       ..color = Colors.red;
-    final wavePoint = Utils.valueBetween(dragePosition.dy, size.height * 0.1, size.height * 0.9);
-    final circlePath = Path()
-      ..reset()
-      ..addOval(Rect.fromCircle(
-          center: Offset(size.width * 0.44, wavePoint), radius: 30));
-    if(circlePath.contains(tapPosition) || validPressed){
+    final wavePoint = Utils.valueBetween(
+        dragePosition.dy, size.height * 0.1, size.height * 0.9);
+    final controllOffset = Offset(size.width * 0.44, wavePoint);
+    final rect = Rect.fromCircle(center: controllOffset, radius: 25);
+    double controllRadius;
+    if (rect.contains(tapPosition) || validPressed) {
+      controllRadius = 30;
       onShouldDraw(true);
-    }
-    else{
+    } else {
+      controllRadius = 25;
       onShouldDraw(false);
     }
     final path = Path()
@@ -59,7 +60,16 @@ class HumidityControllerPainter extends CustomPainter {
           size.width * 0.4, wavePoint + 45, size.width * 0.4, wavePoint + 75)
       ..lineTo(size.width * 0.4, size.height);
     canvas.drawPath(path, paint);
-    canvas.drawPath(circlePath, paint..style = PaintingStyle.fill);
+    canvas.drawCircle(
+        controllOffset, controllRadius, paint..style = PaintingStyle.fill);
+    final pathMetric = path.computeMetrics().first;
+    final n = 50;
+    final spaceBetweenLine = pathMetric.length / n;
+    for (var i = 0; i < n; i++) {
+      final startPosition = pathMetric.getTangentForOffset(spaceBetweenLine * i).position - Offset(10, 0);
+      final endPosition = startPosition - Offset(size.width * 0.1, 0);
+      canvas.drawLine(startPosition, endPosition, paint);
+    }
   }
 
   @override

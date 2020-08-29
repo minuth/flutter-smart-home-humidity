@@ -50,13 +50,31 @@ class _HumidityControllerState extends State<HumidityController> {
                     _shouldDraw = shouldDraw;
                   }),
             ),
+            onTapDown: (details) {
+              setState(() {
+                if(_shouldDraw){
+                   _validPressed = true;
+                }
+                _tapPosition = details.localPosition;
+              });
+            },
+            onTapUp: (detail) {
+               setState(() {
+                 _tapPosition = Offset.zero;
+                _validPressed = false;
+              });
+            },
             onVerticalDragStart: (details) {
               setState(() {
+                if(_shouldDraw){
+                   _validPressed = true;
+                }
                 _tapPosition = details.localPosition;
               });
             },
             onVerticalDragEnd: (details) {
                setState(() {
+                  _tapPosition = Offset.zero;
                 _validPressed = false;
               });
             },
