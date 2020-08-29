@@ -9,7 +9,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      debugShowCheckedModeBanner: false,
+      debugShowCheckedModeBanner: true,
       title: 'Flutter Demo',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -27,7 +27,7 @@ class HumidityController extends StatefulWidget {
 
 class _HumidityControllerState extends State<HumidityController> {
   var _tapPosition = Offset.zero;
-  var _dragePosition = Offset(0, 100);
+  var _dragePosition = Offset.infinite;
   var _shouldDraw = false;
   var _validPressed = false;
   @override
