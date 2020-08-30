@@ -8,8 +8,10 @@ class HumidityControllerPainter extends CustomPainter {
   final Offset tapPosition;
   final Offset dragePosition;
   final Function(bool shouldDraw) onShouldDraw;
+  final int currentCelsius;
   final bool validPressed;
   HumidityControllerPainter(
+      this.currentCelsius,
       {@required this.tapPosition,
       @required this.dragePosition,
       @required this.validPressed,
@@ -95,17 +97,31 @@ class HumidityControllerPainter extends CustomPainter {
       final endPosition = startPosition - Offset(i % 6 == 0?size.width * 0.1: size.width * 0.08, 0);
       canvas.drawLine(startPosition, endPosition, linePaint);
     }
+    final labelStyle = ui.TextStyle(color: Colors.grey,fontSize: 15);
+    final labelValueStyle = ui.TextStyle(color: Colors.purple[900],fontSize: 60, fontWeight: FontWeight.bold);
+
+    final returnTempLable = Utils.generateParagraph("RETURN TEMPERATURE", style: labelStyle);
+    final labelHumidity = Utils.generateParagraph("CURRENT HUMIDITY", style: labelStyle);
+    final tempLabelValue = Utils.generateParagraph("$currentCelsius℃", style: labelValueStyle);
+    final selectedPercent = (100 - (100 * (wavePoint - (size.height * 0.1)))/(size.height * 0.8)).toInt();
+    final selectedLabelValue = Utils.generateParagraph("$selectedPercent%",style: labelValueStyle);
+    canvas.drawParagraph(returnTempLable, Offset(controllOffset.dx + 40, size.height * 0.3));
+    canvas.drawParagraph(tempLabelValue, Offset(controllOffset.dx + 40, size.height * 0.33));
+    canvas.drawParagraph(labelHumidity, Offset(controllOffset.dx + 40,size.height * 0.5));
+    canvas.drawParagraph(selectedLabelValue, Offset(controllOffset.dx + 40, (size.height * 0.57) - selectedLabelValue.height /2));
+    final currentSelectedLabelPercent = Utils.generateParagraph("$selectedPercent%",style: ui.TextStyle(color: Colors.blueAccent[700],fontSize: 30, fontWeight: FontWeight.bold));
+    canvas.drawParagraph(currentSelectedLabelPercent, Offset(10, wavePoint - currentSelectedLabelPercent.height /2));
     final labelCount = 10;
     final spaceBetweenLabel = size.height * 0.8 /labelCount;
     int startValue = 10;
-    final textStyle = ui.TextStyle(color: Colors.purple[900], fontSize: 20, fontWeight: FontWeight.bold);
     for (var i = 0; i <= labelCount; i++) {
-      final label = Utils.generateParagraph("${10*startValue--}%", style: textStyle);
-      canvas.drawParagraph(label, Offset(10, spaceBetweenLabel*i + (size.height * 0.1) - label.height / 2));
+      final labelPercent = 10*startValue--;
+      final textStyle = ui.TextStyle(color: Colors.purple[900], fontSize:20, fontWeight: FontWeight.bold);
+      final label = Utils.generateParagraph("$labelPercent%", style: textStyle);
+      if(labelPercent -5 >= selectedPercent || labelPercent < selectedPercent - 5){
+        canvas.drawParagraph(label, Offset(10, spaceBetweenLabel*i + (size.height * 0.1) - label.height / 2));
+      }
     }
-    final selectedPercent = (100 * (wavePoint - (size.height * 0.1)))/(size.height * 0.8);
-    final selectedLabel = Utils.generateParagraph("${100 - selectedPercent.toInt()}%",style: ui.TextStyle(color: Colors.purple[900],fontSize: 65, fontWeight: FontWeight.bold));
-    canvas.drawParagraph(selectedLabel, Offset(controllOffset.dx + 40, (size.height * 0.5) - selectedLabel.height /2));
   }
   @override
   bool shouldRepaint(HumidityControllerPainter oldDelegate) {
